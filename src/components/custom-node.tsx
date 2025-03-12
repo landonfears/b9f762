@@ -1,22 +1,26 @@
-import React, { memo } from "react";
-import { Handle, Position } from "@xyflow/react";
+import { Sheet, SheetTrigger } from "~/components/ui/sheet";
+import NodeButton from "./node-button";
+import type { HandlePosition } from "~/server/avantos";
+import { Prefill } from "./prefill";
 
-function CustomNode({ data }: { data: { label: string; type: string } }) {
+export function CustomNode({
+  data,
+}: {
+  data: {
+    label: string;
+    type: string;
+    sourceHandles: HandlePosition[];
+    targetHandles: HandlePosition[];
+  };
+}) {
   return (
-    <div className="rounded-md border-2 border-stone-400 bg-white px-4 py-2 shadow-md">
-      <Handle type="source" position={Position.Top} id="top" />
-      <Handle type="source" position={Position.Right} id="right" />
-      <Handle type="source" position={Position.Bottom} id="bottom" />
-      <Handle type="source" position={Position.Left} id="left" />
-      <div className="flex items-center justify-center"></div>
-      <div>{data.type}</div>
-      <div>{data.label}</div>
-      <Handle type="target" position={Position.Top} id="top" />
-      <Handle type="target" position={Position.Right} id="right" />
-      <Handle type="target" position={Position.Bottom} id="bottom" />
-      <Handle type="target" position={Position.Left} id="left" />
-    </div>
+    <Sheet>
+      <SheetTrigger asChild>
+        <button>
+          <NodeButton data={data} />
+        </button>
+      </SheetTrigger>
+      <Prefill data={data} />
+    </Sheet>
   );
 }
-
-export default memo(CustomNode);

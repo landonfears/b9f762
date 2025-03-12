@@ -104,6 +104,8 @@ export interface PayloadField {
   value: string;
 }
 
+export type HandlePosition = "top" | "bottom" | "left" | "right";
+
 export async function getGraph() {
   const test = await fetch(
     "http://localhost:4000/api/v1/1/actions/blueprints/bp_0/bpv_0/graph?Accept=application/json,application/problem+json",
