@@ -1,80 +1,108 @@
-type ActionBlueprintGraphDescription = {
+export interface ActionBlueprintGraphDescription {
   $schema: string;
-  blueprint_id: string;
-  blueprint_name: string;
-  branches: Branch[] | null;
-  created_at: string;
-  created_by: string;
-  description: string;
   id: string;
-  name: string;
   tenant_id: string;
-  updated_at: string;
-  edges: Edge[] | null;
-  forms: Form[] | null;
-  nodes: Node[] | null;
-  status: "draft" | "published" | "historical" | "archived";
-  triggers: TriggerEndpoint[] | null;
-  version_id: string;
-  version_notes: string;
-  version_number: string;
-};
-
-type Branch = {
-  $schema: string;
-  condition: Record<string, unknown>;
-  created_at: string;
-  created_by: string;
+  name: string;
   description: string;
-  id: string;
-  name: string;
-  tenant_id: string;
-  updated_at: string;
-};
+  category: string;
+  nodes: Node[];
+  edges: Edge[];
+  forms: Form[];
+  branches: unknown[];
+  triggers: unknown[];
+}
 
-type Edge = {
+export interface Node {
+  id: string;
+  type: string;
+  position: Position;
+  data: NodeData;
+}
+
+export interface Position {
+  x: number;
+  y: number;
+}
+
+export interface NodeData {
+  id: string;
+  component_key: string;
+  component_type: string;
+  component_id: string;
+  name: string;
+  prerequisites: string[];
+  permitted_roles: unknown[];
+  input_mapping: Record<string, unknown>;
+  sla_duration: Duration;
+  approval_required: boolean;
+  approval_roles: unknown[];
+}
+
+export interface Duration {
+  number: number;
+  unit: string;
+}
+
+export interface Edge {
   source: string;
   target: string;
-};
+}
 
-type Form = {
-  $schema: string;
-  custom_javascript?: string;
+export interface Form {
+  id: string;
+  name: string;
   description: string;
-  dynamic_field_config: Record<string, object>;
-  field_schema: object;
-  id: string;
   is_reusable: boolean;
-  name: string;
-  ui_schema?: object;
-  vendor_schema?: Record<string, unknown>;
-};
+  field_schema: FieldSchema;
+  ui_schema: UISchema;
+  dynamic_field_config: DynamicFieldConfig;
+}
 
-type Node = {
-  data: object;
-  id: string;
-  position: object;
-  type: "form" | "branch" | "trigger" | "configuration";
-};
+export interface FieldSchema {
+  type: string;
+  properties: Record<string, FieldProperty>;
+  required: string[];
+}
 
-type TriggerEndpoint = {
-  $schema: string;
-  created_at: string;
-  id: string;
-  max_retries?: number;
-  name: string;
-  output_mapping: Record<string, string>;
-  path_template: string;
-  path_template_variables: string[] | null;
-  payload_template: Record<string, unknown>;
-  payload_template_variables: string[] | null;
-  query_parameter_template: Record<string, string>;
-  query_parameter_template_variables: string[] | null;
-  request_method: "POST" | "PUT" | "GET" | "DELETE";
-  timeout_seconds?: number;
-  trigger_service_id: string;
-  updated_at: string;
-};
+export interface FieldProperty {
+  avantos_type: string;
+  title?: string;
+  type: string;
+  format?: string;
+  enum?: string[];
+  items?: FieldItems;
+  uniqueItems?: boolean;
+}
+
+export interface FieldItems {
+  type: string;
+  enum?: string[];
+}
+
+export interface UISchema {
+  type: string;
+  elements: UIElement[];
+}
+
+export interface UIElement {
+  type: string;
+  scope: string;
+  label: string;
+  options?: Record<string, unknown>;
+}
+
+export type DynamicFieldConfig = Record<string, DynamicField>;
+
+export interface DynamicField {
+  selector_field: string;
+  payload_fields: Record<string, PayloadField>;
+  endpoint_id: string;
+}
+
+export interface PayloadField {
+  type: string;
+  value: string;
+}
 
 export async function getGraph() {
   const test = await fetch(
