@@ -8,11 +8,15 @@ export function PrefillButton({
   variant,
   label,
   type,
+  onRemove,
+  onToggleActive,
 }: {
   data: GraphNodeData;
   variant: "ready" | "active" | "inactive" | "disabled";
   label: string;
   type: "array" | Omit<FieldTypes, "array">;
+  onRemove?: () => void;
+  onToggleActive?: () => void;
 }) {
   // Type icon
   let TypeIcon = Type;
@@ -29,19 +33,47 @@ export function PrefillButton({
   }
   return (
     <div>
-      <Button
-        disabled={variant === "disabled"}
-        className="flex w-full justify-start border border-neutral-300 bg-neutral-200 text-xs text-neutral-800 hover:bg-neutral-300"
+      <div
+        className={cn(
+          "flex w-full items-center justify-between gap-2 rounded-sm border p-3 text-xs drop-shadow-md",
+          {
+            "cursor-not-allowed": variant === "disabled",
+            "opacity-50": variant === "disabled",
+            "cursor-pointer": variant !== "disabled",
+            ...(variant === "ready"
+              ? {
+                  "border-indigo-300": true,
+                  "bg-indigo-100": true,
+                  "text-neutral-600": true,
+                  "hover:bg-indigo-200": true,
+                  "border-dashed": true,
+                }
+              : {
+                  "border-neutral-300": true,
+                  "bg-neutral-200": true,
+                  "text-neutral-800": true,
+                  "hover:bg-neutral-300": true,
+                }),
+          },
+        )}
+        tabIndex={0}
       >
         <TypeIcon className="h-4 w-4" />
-        <p className="max-w-4/5 grow truncate text-left font-bold">{label}</p>
+        <p className="w-4/5 grow truncate text-left font-bold">{label}</p>
 
-        {variant === "active" && <Eye className="h-4 w-4" />}
-        {variant === "inactive" && <EyeOff className="h-4 w-4" />}
-        {(variant === "active" || variant === "inactive") && (
-          <X className="h-4 w-4 rounded-full bg-neutral-400 p-0.5 text-white" />
+        {variant === "active" && (
+          <Eye className="h-4 w-4" onClick={onToggleActive} />
         )}
-      </Button>
+        {variant === "inactive" && (
+          <EyeOff className="h-4 w-4" onClick={onToggleActive} />
+        )}
+        {(variant === "active" || variant === "inactive") && (
+          <X
+            className="h-4 w-4 rounded-full bg-neutral-400 p-0.5 text-white"
+            onClick={onRemove}
+          />
+        )}
+      </div>
     </div>
   );
 }
