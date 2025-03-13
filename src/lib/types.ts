@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type HandlePosition = "top" | "bottom" | "left" | "right";
 
 export interface NodeDependency {
@@ -47,6 +49,8 @@ export interface GraphNodeData {
   sourceHandles: HandlePosition[];
   targetHandles: HandlePosition[];
   graphNodeForm: GraphNodeForm;
+  // setGraphData: (data: GraphFormData) => void;
+  setGraphData: Dispatch<SetStateAction<GraphFormData>>;
 }
 
 const graphFormData: GraphFormData = [

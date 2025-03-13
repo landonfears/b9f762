@@ -27,6 +27,7 @@ export default function Graph({
       sourceHandles: [] as HandlePosition[],
       targetHandles: [] as HandlePosition[],
       graphNodeForm: graphData.find((n) => n.nodeId === node.id),
+      setGraphData,
     },
     type: "custom",
   }));
