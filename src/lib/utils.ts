@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { ActionBlueprintGraphDescription, Node } from "~/server/avantos";
-import {
+import type { ActionBlueprintGraphDescription, Node } from "~/server/avantos";
+import type {
   CompatibleField,
   FieldTypes,
   GraphFormData,
@@ -79,6 +79,7 @@ function getCompatibleFields(
           compatibleFields.push({
             nodeId: dep.nodeId,
             nodeTitle: dep.nodeTitle,
+            depth: dep.depth,
             fieldId: fieldKey,
           });
         }
@@ -87,6 +88,33 @@ function getCompatibleFields(
   });
 
   return compatibleFields;
+}
+
+function getPrefill(
+  compatibleFields: CompatibleField[],
+  fieldId: string,
+): NodeFormField["prefill"] {
+  const fieldMatch = compatibleFields
+    .filter((field) => field.fieldId === fieldId)
+    .sort((a, b) => a.depth - b.depth);
+  if (fieldMatch.length && fieldMatch[0]) {
+    return {
+      inheritNodeId: fieldMatch[0].nodeId,
+      inheritNodeTitle: fieldMatch[0].nodeTitle,
+      inheritFieldId: fieldMatch[0].fieldId,
+      active: true,
+    };
+  }
+  const anyMatch = compatibleFields.sort((a, b) => a.depth - b.depth);
+  if (anyMatch.length && anyMatch[0]) {
+    return {
+      inheritNodeId: anyMatch[0].nodeId,
+      inheritNodeTitle: anyMatch[0].nodeTitle,
+      inheritFieldId: anyMatch[0].fieldId,
+      active: true,
+    };
+  }
+  return null;
 }
 
 function buildNodeFields(
@@ -126,7 +154,7 @@ function buildNodeFields(
           }
         : undefined),
       compatibleFields,
-      prefill: null,
+      prefill: getPrefill(compatibleFields, fieldKey),
     };
   });
   return nodeFields;

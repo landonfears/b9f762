@@ -8,6 +8,7 @@ export interface NodeDependency {
 export interface CompatibleField {
   nodeId: string;
   nodeTitle: string;
+  depth: number;
   fieldId: string;
 }
 interface NodeFormPrefill {
@@ -67,6 +68,7 @@ const graphFormData: GraphFormData = [
           {
             nodeId: "node-2",
             nodeTitle: "Node 2",
+            depth: 1,
             fieldId: "field-2",
           },
         ],

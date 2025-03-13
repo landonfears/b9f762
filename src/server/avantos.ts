@@ -105,13 +105,13 @@ export interface PayloadField {
 }
 
 export async function getGraph() {
-  const test = await fetch(
+  const response = await fetch(
     "http://localhost:4000/api/v1/1/actions/blueprints/bp_0/bpv_0/graph?Accept=application/json,application/problem+json",
     {
       method: "GET",
       redirect: "follow",
     },
   );
-  const graph = (await test.json()) as ActionBlueprintGraphDescription;
+  const graph = (await response.json()) as ActionBlueprintGraphDescription;
   return graph;
 }
