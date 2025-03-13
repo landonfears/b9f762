@@ -1,18 +1,22 @@
 "use client";
 
 import type { ActionBlueprintGraphDescription } from "~/server/avantos";
-import type { GraphFormData, HandlePosition } from "~/lib/types";
-import { Background, Controls, ReactFlow, useNodesState } from "@xyflow/react";
-import { CustomNode } from "./custom-node";
+import type { FlowNodeData, HandlePosition } from "~/lib/types";
+import { Background, Controls, ReactFlow } from "@xyflow/react";
+import CustomNode from "./custom-node";
 import { buildGraphForm } from "~/lib/utils";
 import { GraphProvider } from "~/store";
-import { useMemo } from "react";
+import { useState } from "react";
+import { Prefill } from "./prefill";
 
 export default function Graph({
   graph,
 }: {
   graph: ActionBlueprintGraphDescription;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [currNode, setCurrNode] = useState<FlowNodeData | null>(null);
+
   const nodes = graph?.nodes?.map((node) => ({
     id: node.id,
     position: node.position,
@@ -87,13 +91,6 @@ export default function Graph({
     };
   });
 
-  const nodeTypes = useMemo(
-    () => ({
-      custom: CustomNode,
-    }),
-    [],
-  );
-  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   return (
     <GraphProvider initialGraph={buildGraphForm(graph)}>
       <div style={{ height: "100%" }}>
@@ -101,13 +98,20 @@ export default function Graph({
           proOptions={{ hideAttribution: true }}
           nodes={nodes}
           edges={edges}
-          nodeTypes={nodeTypes}
+          nodeTypes={{ custom: CustomNode }}
+          onNodeClick={(_, node) => {
+            setCurrNode(nodes.find((n) => n.id === node.id)?.data ?? null);
+            setIsOpen(true);
+          }}
           fitView
         >
           <Background />
           <Controls />
         </ReactFlow>
       </div>
+      {currNode && (
+        <Prefill isOpen={isOpen} setIsOpen={setIsOpen} data={currNode} />
+      )}
     </GraphProvider>
   );
 }

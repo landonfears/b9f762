@@ -1,17 +1,14 @@
-import type { FieldTypes, FlowNodeData } from "~/lib/types";
-import { Button } from "./ui/button";
+import type { FieldTypes } from "~/lib/types";
 import { cn } from "~/lib/utils";
 import { Database, Eye, EyeOff, List, Sigma, Type, X } from "lucide-react";
 
 export function PrefillButton({
-  data,
   variant,
   label,
   type,
   onRemove,
   onToggleActive,
 }: {
-  data: FlowNodeData;
   variant: "ready" | "active" | "inactive" | "disabled";
   label: string;
   type: "array" | Omit<FieldTypes, "array">;

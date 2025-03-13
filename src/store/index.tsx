@@ -12,10 +12,12 @@ export type TogglePrefillAllFunc = (nodeId: string, active: boolean) => void;
 
 interface GraphStore {
   graph: GraphFormData;
+  updated: Date;
   actions: {
     removePrefill: RemovePrefillFunc;
     togglePrefillActive: TogglePrefillFunc;
     togglePrefillAll: TogglePrefillAllFunc;
+    updateGraphDate: () => void;
   };
 }
 
@@ -33,6 +35,8 @@ export const GraphProvider = ({
   const [store] = useState<StoreApi<GraphStore> | null>(() =>
     createStore((set) => ({
       graph: initialGraph,
+      updated: new Date(),
+      tv: 0,
       actions: {
         removePrefill: (nodeId: string, field: NodeFormField) =>
           set((state: GraphStore) => {
@@ -92,6 +96,7 @@ export const GraphProvider = ({
 
             return { graph: state.graph };
           }),
+        updateGraphDate: () => set(() => ({ updated: new Date() })),
       },
     })),
   );
@@ -110,3 +115,4 @@ export const useGraphStore = (selector: (state: GraphStore) => unknown) => {
   return useStore(store, selector);
 };
 export const useGraph = () => useGraphStore((state) => state.graph);
+export const useGraphUpdated = () => useGraphStore((state) => state.updated);
