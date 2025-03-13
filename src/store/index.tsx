@@ -67,7 +67,6 @@ export const GraphProvider = ({
             if (graphField?.prefill) {
               graphField.prefill.active = active;
             }
-            console.log("currGraphData toggle", state.graph);
 
             return { graph: state.graph };
           }),
