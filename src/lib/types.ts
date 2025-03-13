@@ -43,14 +43,12 @@ interface GraphNodeForm {
 }
 export type GraphFormData = GraphNodeForm[];
 
-export interface GraphNodeData {
+export interface FlowNodeData {
+  id: string;
   label: string;
   type: string;
   sourceHandles: HandlePosition[];
   targetHandles: HandlePosition[];
-  graphNodeForm: GraphNodeForm;
-  // setGraphData: (data: GraphFormData) => void;
-  setGraphData: Dispatch<SetStateAction<GraphFormData>>;
 }
 
 const graphFormData: GraphFormData = [

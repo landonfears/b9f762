@@ -1,9 +1,9 @@
 import { Sheet, SheetTrigger } from "~/components/ui/sheet";
 import NodeButton from "./node-button";
-import type { GraphNodeData } from "~/lib/types";
+import type { FlowNodeData } from "~/lib/types";
 import { Prefill } from "./prefill";
 
-export function CustomNode({ data }: { data: GraphNodeData }) {
+export function CustomNode({ data }: { data: FlowNodeData }) {
   return (
     <Sheet>
       <SheetTrigger asChild>

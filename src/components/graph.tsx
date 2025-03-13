@@ -2,35 +2,30 @@
 
 import type { ActionBlueprintGraphDescription } from "~/server/avantos";
 import type { GraphFormData, HandlePosition } from "~/lib/types";
-import { Background, Controls, ReactFlow } from "@xyflow/react";
+import { Background, Controls, ReactFlow, useNodesState } from "@xyflow/react";
 import { CustomNode } from "./custom-node";
 import { buildGraphForm } from "~/lib/utils";
-import { useState } from "react";
+import { GraphProvider } from "~/store";
+import { useMemo } from "react";
 
 export default function Graph({
   graph,
 }: {
   graph: ActionBlueprintGraphDescription;
 }) {
-  const [graphData, setGraphData] = useState<GraphFormData>(
-    buildGraphForm(graph),
-  );
-  // Build graph form data
-  // const graphData: GraphFormData = buildGraphForm(graph);
-
   const nodes = graph?.nodes?.map((node) => ({
     id: node.id,
     position: node.position,
     data: {
+      id: node.id,
       label: node.data.name,
       type: node.data.component_type,
       sourceHandles: [] as HandlePosition[],
       targetHandles: [] as HandlePosition[],
-      graphNodeForm: graphData.find((n) => n.nodeId === node.id),
-      setGraphData,
     },
     type: "custom",
   }));
+  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
 
   const edges = graph?.edges.map((edge) => {
     const sourceNode = graph.nodes.find((node) => node.id === edge.source);
@@ -92,18 +87,27 @@ export default function Graph({
     };
   });
 
+  const nodeTypes = useMemo(
+    () => ({
+      custom: CustomNode,
+    }),
+    [],
+  );
+  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   return (
-    <div style={{ height: "100%" }}>
-      <ReactFlow
-        proOptions={{ hideAttribution: true }}
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={{ custom: CustomNode }}
-        fitView
-      >
-        <Background />
-        <Controls />
-      </ReactFlow>
-    </div>
+    <GraphProvider initialGraph={buildGraphForm(graph)}>
+      <div style={{ height: "100%" }}>
+        <ReactFlow
+          proOptions={{ hideAttribution: true }}
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          fitView
+        >
+          <Background />
+          <Controls />
+        </ReactFlow>
+      </div>
+    </GraphProvider>
   );
 }

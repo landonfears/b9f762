@@ -6,45 +6,42 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import type { GraphNodeData, NodeFormField } from "~/lib/types";
+import type { GraphFormData, FlowNodeData, NodeFormField } from "~/lib/types";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PrefillButton } from "./prefill-button";
+import { useGraph, useGraphStore } from "~/store";
+import type {
+  RemovePrefillFunc,
+  TogglePrefillAllFunc,
+  TogglePrefillFunc,
+} from "~/store";
 
-export function Prefill({ data }: { data: GraphNodeData }) {
-  const [prefill, setPrefill] = useState(true);
+export function Prefill({ data }: { data: FlowNodeData }) {
+  const graph = useGraph() as GraphFormData;
+  const graphNode = graph.find((gn) => gn.nodeId === data.id);
+  const handleRemovePrefill = useGraphStore(
+    (state) => state.actions.removePrefill,
+  ) as RemovePrefillFunc;
+  const handleTogglePrefillActive = useGraphStore(
+    (state) => state.actions.togglePrefillActive,
+  ) as TogglePrefillFunc;
 
-  const handleRemovePrefill = (field: NodeFormField) => {
-    data.setGraphData((currGraphData) => {
-      const currGraphNode = currGraphData.find(
-        (currNode) => currNode.nodeId === data.graphNodeForm.nodeId,
-      );
-      let graphField = currGraphNode?.fields.find(
-        (currField) => currField.fieldId === field.fieldId,
-      );
-      if (graphField) {
-        graphField.prefill = null;
-      }
-      return currGraphData;
-    });
-  };
-  const handleTogglePrefillActive = (field: NodeFormField, active: boolean) => {
-    data.setGraphData((currGraphData) => {
-      const currGraphNode = currGraphData.find(
-        (currNode) => currNode.nodeId === data.graphNodeForm.nodeId,
-      );
-      let graphField = currGraphNode?.fields.find(
-        (currField) => currField.fieldId === field.fieldId,
-      );
-      if (graphField && graphField.prefill) {
-        graphField.prefill.active = active;
-      }
-      console.log("currGraphData toggle", currGraphData);
-      return currGraphData;
-    });
-  };
+  const handleTogglePrefillAll = useGraphStore(
+    (state) => state.actions.togglePrefillAll,
+  ) as TogglePrefillAllFunc;
+  console.log("graph", graphNode);
+
+  const isPrefill = useCallback(() => {
+    const hasPrefill = !!graphNode?.fields.filter((f) => f.prefill)?.length;
+    const hasActivePrefill = !!graphNode?.fields.filter(
+      (f) => f.prefill?.active,
+    )?.length;
+
+    return (hasPrefill && hasActivePrefill) || !hasPrefill;
+  }, [graphNode]);
 
   return (
     <SheetContent side="right">
@@ -60,12 +57,12 @@ export function Prefill({ data }: { data: GraphNodeData }) {
           <Switch
             id="prefill"
             className="data-[state=checked]:bg-indigo-600"
-            checked={prefill}
-            onCheckedChange={setPrefill}
+            checked={isPrefill()}
+            onCheckedChange={(e) => handleTogglePrefillAll(data.id, e)}
           />
         </div>
         <div className="flex flex-col gap-4">
-          {data.graphNodeForm.fields.map((field) => {
+          {graphNode?.fields.map((field) => {
             const props = {
               data: data,
               label: field.fieldId,
@@ -84,7 +81,7 @@ export function Prefill({ data }: { data: GraphNodeData }) {
               );
             } else if (
               field.prefill === null &&
-              (field.compatibleFields.length === 0 || !prefill)
+              field.compatibleFields.length === 0
             ) {
               return (
                 <PrefillButton
@@ -100,8 +97,10 @@ export function Prefill({ data }: { data: GraphNodeData }) {
                   {...props}
                   variant="active"
                   label={`${field.fieldId}: ${field.prefill.inheritNodeTitle}.${field.prefill.inheritFieldId}`}
-                  onRemove={() => handleRemovePrefill(field)}
-                  onToggleActive={() => handleTogglePrefillActive(field, false)}
+                  onRemove={() => handleRemovePrefill(data.id, field)}
+                  onToggleActive={() =>
+                    handleTogglePrefillActive(data.id, field, false)
+                  }
                 />
               );
             } else if (field.prefill && !field.prefill?.active) {
@@ -111,8 +110,10 @@ export function Prefill({ data }: { data: GraphNodeData }) {
                   {...props}
                   variant="inactive"
                   label={`${field.fieldId}: ${field.prefill.inheritNodeTitle}.${field.prefill.inheritFieldId}`}
-                  onRemove={() => handleRemovePrefill(field)}
-                  onToggleActive={() => handleTogglePrefillActive(field, true)}
+                  onRemove={() => handleRemovePrefill(data.id, field)}
+                  onToggleActive={() =>
+                    handleTogglePrefillActive(data.id, field, true)
+                  }
                 />
               );
             }
