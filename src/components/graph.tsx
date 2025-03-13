@@ -1,17 +1,19 @@
 "use client";
 
-import type {
-  ActionBlueprintGraphDescription,
-  HandlePosition,
-} from "~/server/avantos";
+import type { ActionBlueprintGraphDescription } from "~/server/avantos";
+import type { GraphFormData, HandlePosition } from "~/lib/types";
 import { Background, Controls, ReactFlow } from "@xyflow/react";
 import { CustomNode } from "./custom-node";
+import { buildGraphForm } from "~/lib/utils";
 
 export default function Graph({
   graph,
 }: {
   graph: ActionBlueprintGraphDescription;
 }) {
+  // Build graph form data
+  const graphData: GraphFormData = buildGraphForm(graph);
+
   const nodes = graph?.nodes?.map((node) => ({
     id: node.id,
     position: node.position,
@@ -20,6 +22,7 @@ export default function Graph({
       type: node.data.component_type,
       sourceHandles: [] as HandlePosition[],
       targetHandles: [] as HandlePosition[],
+      graphNodeForm: graphData.find((n) => n.nodeId === node.id),
     },
     type: "custom",
   }));

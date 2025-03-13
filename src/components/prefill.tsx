@@ -1,5 +1,4 @@
 import {
-  Sheet,
   SheetClose,
   SheetContent,
   SheetDescription,
@@ -7,18 +6,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import type { HandlePosition } from "~/server/avantos";
+import type { GraphNodeData } from "~/lib/types";
 
-export function Prefill({
-  data,
-}: {
-  data: {
-    label: string;
-    type: string;
-    sourceHandles: HandlePosition[];
-    targetHandles: HandlePosition[];
-  };
-}) {
+export function Prefill({ data }: { data: GraphNodeData }) {
+  console.log("data", data);
   return (
     <SheetContent>
       <SheetHeader>

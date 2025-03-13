@@ -1,18 +1,9 @@
 import { Sheet, SheetTrigger } from "~/components/ui/sheet";
 import NodeButton from "./node-button";
-import type { HandlePosition } from "~/server/avantos";
+import type { GraphNodeData } from "~/lib/types";
 import { Prefill } from "./prefill";
 
-export function CustomNode({
-  data,
-}: {
-  data: {
-    label: string;
-    type: string;
-    sourceHandles: HandlePosition[];
-    targetHandles: HandlePosition[];
-  };
-}) {
+export function CustomNode({ data }: { data: GraphNodeData }) {
   return (
     <Sheet>
       <SheetTrigger asChild>

@@ -1,23 +1,14 @@
 import React, { memo } from "react";
 import { Handle, Position } from "@xyflow/react";
 import { TableCellsMerge } from "lucide-react";
-import type { HandlePosition } from "~/server/avantos";
+import type { GraphNodeData } from "~/lib/types";
 
 const showOrHideStyle = (show: boolean) => {
   return {
     ...(show ? {} : { background: "transparent", border: 0 }),
   };
 };
-function NodeButton({
-  data,
-}: {
-  data: {
-    label: string;
-    type: string;
-    sourceHandles: HandlePosition[];
-    targetHandles: HandlePosition[];
-  };
-}) {
+function NodeButton({ data }: { data: GraphNodeData }) {
   return (
     <div className="rounded-md border-2 border-stone-400 bg-white px-4 py-2 shadow-md hover:border-indigo-600 hover:bg-neutral-50">
       <Handle
