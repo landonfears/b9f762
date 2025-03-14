@@ -6,7 +6,7 @@
 - [x] Render nodes using React-flow
 - [x] Prefill UI for forms
 - [x] Prefill config modal
-- [ ] Add tests
+- [x] Add tests
 - [ ] Add documentation
 
 ## Quickstart (TBD)

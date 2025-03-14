@@ -68,12 +68,6 @@ export function PrefillConfig({
   );
   const grouping: Record<string, boolean> = {};
 
-  const toggleItem = (item: string) => {
-    setOpenItems((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item],
-    );
-  };
-
   useEffect(() => {
     if (searchText.length > 1) {
       searchFields?.forEach((field) => {

@@ -8,6 +8,7 @@ import type {
   NodeDependency,
   NodeFormField,
 } from "./types";
+import { GLOBAL_DATA } from "~/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -59,6 +60,25 @@ function getCompatibleFields(
   arrayItemType: FieldTypes | undefined,
 ): CompatibleField[] {
   const compatibleFields = [] as CompatibleField[];
+
+  // Source compatible fields from global data
+  const globalFieldKeys = Object.keys(GLOBAL_DATA.properties);
+  globalFieldKeys.forEach((globalFieldKey) => {
+    const depType = (GLOBAL_DATA.properties[globalFieldKey]?.type ??
+      "string") as FieldTypes;
+    const depArrayItemType =
+      depType === "array"
+        ? (GLOBAL_DATA.properties[globalFieldKey]?.items?.type ?? "string")
+        : undefined;
+    if (depType === type && depArrayItemType === arrayItemType) {
+      compatibleFields.push({
+        nodeId: GLOBAL_DATA.id,
+        nodeTitle: GLOBAL_DATA.title,
+        depth: Number.MAX_SAFE_INTEGER,
+        fieldId: globalFieldKey,
+      });
+    }
+  });
 
   dependencies.forEach((dep) => {
     const formId = graph.nodes.find((node) => node.id === dep.nodeId)?.data
