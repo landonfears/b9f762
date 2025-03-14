@@ -1,6 +1,10 @@
 import { createContext, useContext, useState } from "react";
 import { createStore, useStore } from "zustand";
-import type { GraphFormData, NodeFormField } from "~/lib/types";
+import type {
+  GraphFormData,
+  NodeFormField,
+  NodeFormPrefill,
+} from "~/lib/types";
 
 export type RemovePrefillFunc = (nodeId: string, field: NodeFormField) => void;
 export type TogglePrefillFunc = (
@@ -9,6 +13,11 @@ export type TogglePrefillFunc = (
   active: boolean,
 ) => void;
 export type TogglePrefillAllFunc = (nodeId: string, active: boolean) => void;
+export type UpdatePrefillFunc = (
+  nodeId: string,
+  field: NodeFormField,
+  inheritedNode: NodeFormPrefill,
+) => void;
 
 interface GraphStore {
   graph: GraphFormData;
@@ -17,6 +26,7 @@ interface GraphStore {
     removePrefill: RemovePrefillFunc;
     togglePrefillActive: TogglePrefillFunc;
     togglePrefillAll: TogglePrefillAllFunc;
+    updatePrefill: UpdatePrefillFunc;
     updateGraphDate: () => void;
   };
 }
@@ -48,6 +58,24 @@ export const GraphProvider = ({
             );
             if (graphField) {
               graphField.prefill = null;
+            }
+
+            return { graph: state.graph };
+          }),
+        updatePrefill: (
+          nodeId: string,
+          field: NodeFormField,
+          inheritedNode: NodeFormPrefill,
+        ) =>
+          set((state: GraphStore) => {
+            const currGraphNode = state.graph.find(
+              (currNode) => currNode.nodeId === nodeId,
+            );
+            const graphField = currGraphNode?.fields.find(
+              (currField) => currField.fieldId === field.fieldId,
+            );
+            if (graphField) {
+              graphField.prefill = inheritedNode;
             }
 
             return { graph: state.graph };

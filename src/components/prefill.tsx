@@ -16,7 +16,9 @@ import type {
   RemovePrefillFunc,
   TogglePrefillAllFunc,
   TogglePrefillFunc,
+  UpdatePrefillFunc,
 } from "~/store";
+import { PrefillConfig } from "./prefill-config";
 
 export function Prefill({
   data,
@@ -32,6 +34,11 @@ export function Prefill({
   const handleRemovePrefill = useGraphStore(
     (state) => state.actions.removePrefill,
   ) as RemovePrefillFunc;
+
+  const handleUpdatePrefill = useGraphStore(
+    (state) => state.actions.updatePrefill,
+  ) as UpdatePrefillFunc;
+
   const handleTogglePrefillActive = useGraphStore(
     (state) => state.actions.togglePrefillActive,
   ) as TogglePrefillFunc;
@@ -91,11 +98,13 @@ export function Prefill({
           */
               if (field.prefill === null && field.compatibleFields.length > 0) {
                 return (
-                  <PrefillButton
+                  <PrefillConfig
                     key={field.fieldId}
-                    {...props}
-                    variant="ready"
-                  />
+                    data={data}
+                    field={field.fieldId}
+                  >
+                    <PrefillButton {...props} variant="ready" />
+                  </PrefillConfig>
                 );
               } else if (
                 field.prefill === null &&

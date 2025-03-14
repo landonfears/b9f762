@@ -11,7 +11,7 @@ export interface CompatibleField {
   depth: number;
   fieldId: string;
 }
-interface NodeFormPrefill {
+export interface NodeFormPrefill {
   inheritNodeId: string;
   inheritNodeTitle: string;
   inheritFieldId: string;
