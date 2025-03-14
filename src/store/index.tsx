@@ -27,11 +27,13 @@ interface GraphStore {
     togglePrefillActive: TogglePrefillFunc;
     togglePrefillAll: TogglePrefillAllFunc;
     updatePrefill: UpdatePrefillFunc;
+    loadFromLocalStorage: () => void;
     updateGraphDate: () => void;
   };
 }
 
 import type { StoreApi } from "zustand";
+import { LOCAL_STORAGE_KEY } from "~/constants";
 
 const GraphContext = createContext<StoreApi<GraphStore> | null>(null);
 
@@ -46,7 +48,6 @@ export const GraphProvider = ({
     createStore((set) => ({
       graph: initialGraph,
       updated: new Date(),
-      tv: 0,
       actions: {
         removePrefill: (nodeId: string, field: NodeFormField) =>
           set((state: GraphStore) => {
@@ -60,6 +61,10 @@ export const GraphProvider = ({
               graphField.prefill = null;
             }
 
+            localStorage.setItem(
+              LOCAL_STORAGE_KEY,
+              JSON.stringify(state.graph),
+            );
             return { graph: state.graph };
           }),
         updatePrefill: (
@@ -78,6 +83,10 @@ export const GraphProvider = ({
               graphField.prefill = inheritedNode;
             }
 
+            localStorage.setItem(
+              LOCAL_STORAGE_KEY,
+              JSON.stringify(state.graph),
+            );
             return { graph: state.graph };
           }),
         togglePrefillActive: (
@@ -96,9 +105,12 @@ export const GraphProvider = ({
               graphField.prefill.active = active;
             }
 
+            localStorage.setItem(
+              LOCAL_STORAGE_KEY,
+              JSON.stringify(state.graph),
+            );
             return { graph: state.graph };
           }),
-
         togglePrefillAll: (nodeId: string, active: boolean) =>
           set((state: GraphStore) => {
             const currGraphNode = state.graph.find(
@@ -121,6 +133,20 @@ export const GraphProvider = ({
               });
             }
 
+            localStorage.setItem(
+              LOCAL_STORAGE_KEY,
+              JSON.stringify(state.graph),
+            );
+            return { graph: state.graph };
+          }),
+        loadFromLocalStorage: () =>
+          set((state: GraphStore) => {
+            const graph = JSON.parse(
+              localStorage.getItem(LOCAL_STORAGE_KEY) as string,
+            );
+            if (graph) {
+              return { graph };
+            }
             return { graph: state.graph };
           }),
         updateGraphDate: () => set(() => ({ updated: new Date() })),

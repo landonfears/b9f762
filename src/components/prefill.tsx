@@ -9,7 +9,7 @@ import {
 import type { GraphFormData, FlowNodeData } from "~/lib/types";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { PrefillButton } from "./prefill-button";
 import { useGraph, useGraphStore, useGraphUpdated } from "~/store";
 import type {
@@ -46,6 +46,15 @@ export function Prefill({
   const updateGraphDate = useGraphStore(
     (state) => state.actions.updateGraphDate,
   ) as () => void;
+
+  const handleLoadGraph = useGraphStore(
+    (state) => state.actions.loadFromLocalStorage,
+  ) as () => void;
+
+  useEffect(() => {
+    handleLoadGraph();
+    updateGraphDate();
+  }, []);
 
   const isPrefill = useCallback(() => {
     const hasPrefill = !!graphNode?.fields.filter((f) => f.prefill)?.length;

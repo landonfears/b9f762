@@ -5,8 +5,8 @@ import type { FlowNodeData, HandlePosition } from "~/lib/types";
 import { Background, Controls, ReactFlow } from "@xyflow/react";
 import CustomNode from "./custom-node";
 import { buildGraphForm } from "~/lib/utils";
-import { GraphProvider } from "~/store";
-import { useState } from "react";
+import { GraphProvider, useGraphStore, useGraphUpdated } from "~/store";
+import { useEffect, useState } from "react";
 import { Prefill } from "./prefill";
 
 export default function Graph({
@@ -29,7 +29,6 @@ export default function Graph({
     },
     type: "custom",
   }));
-  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
 
   const edges = graph?.edges.map((edge) => {
     const sourceNode = graph.nodes.find((node) => node.id === edge.source);
