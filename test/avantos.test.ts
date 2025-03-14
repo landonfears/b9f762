@@ -1,5 +1,6 @@
 import { vi, expect, describe, it } from "vitest";
-import { FetchError, getGraph } from "~/server/avantos";
+import { getGraph } from "~/server/avantos";
+import type { FetchError } from "~/server/avantos";
 import graphJson from "~/server/mock/graph.json";
 
 const mockResponse = graphJson;
@@ -8,9 +9,11 @@ describe("getGraph", () => {
   it("should fetch data successfully from API", async () => {
     global.fetch = vi.fn(() =>
       Promise.resolve({
+        ok: true,
+        status: 200,
         json: () => Promise.resolve(mockResponse),
-      }),
-    ) as any;
+      } as Response),
+    );
 
     const data = await getGraph();
     expect(data).toEqual(mockResponse);
@@ -28,7 +31,7 @@ describe("getGraph", () => {
   });
 
   it("should handle fetch failure", async () => {
-    global.fetch = vi.fn(() => Promise.reject("API is down"));
+    global.fetch = vi.fn(() => Promise.reject(new Error("API is down")));
 
     const data = await getGraph();
     expect(data).toEqual({

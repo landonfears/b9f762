@@ -84,10 +84,7 @@ describe("Graph Store", () => {
     const formF = state.graph.find((node) => node.nodeTitle === "Form F");
     expect(formF).toBeDefined();
     expect(formF?.fields?.[0]?.prefill?.inheritNodeId).toBeDefined();
-    state.actions.removePrefill(
-      formF!.nodeId,
-      formF!.fields[0] as NodeFormField,
-    );
+    state.actions.removePrefill(formF!.nodeId, formF!.fields[0]!);
     expect(formF).toBeDefined();
     expect(formF?.fields?.[0]?.prefill?.inheritNodeId).toBeUndefined();
   });
@@ -95,21 +92,14 @@ describe("Graph Store", () => {
   it("should handle updating prefill field", () => {
     // Test the custom logic for removePrefill
     const formF = state.graph.find((node) => node.nodeTitle === "Form F");
-    state.actions.removePrefill(
-      formF!.nodeId,
-      formF!.fields[0] as NodeFormField,
-    );
+    state.actions.removePrefill(formF!.nodeId, formF!.fields[0]!);
     const lastCompatibleField = formF!.fields[0]?.compatibleFields.at(-1);
-    state.actions.updatePrefill(
-      formF!.nodeId,
-      formF!.fields[0] as NodeFormField,
-      {
-        active: true,
-        inheritNodeId: lastCompatibleField!.nodeId,
-        inheritNodeTitle: lastCompatibleField!.nodeTitle,
-        inheritFieldId: lastCompatibleField!.fieldId,
-      },
-    );
+    state.actions.updatePrefill(formF!.nodeId, formF!.fields[0]!, {
+      active: true,
+      inheritNodeId: lastCompatibleField!.nodeId,
+      inheritNodeTitle: lastCompatibleField!.nodeTitle,
+      inheritFieldId: lastCompatibleField!.fieldId,
+    });
 
     expect(formF).toBeDefined();
     expect(formF?.fields?.[0]?.prefill?.inheritNodeId).toBeDefined();
@@ -122,17 +112,9 @@ describe("Graph Store", () => {
     const formF = state.graph.find((node) => node.nodeTitle === "Form F");
     expect(formF).toBeDefined();
     expect(formF?.fields?.[0]?.prefill?.active).toEqual(true);
-    state.actions.togglePrefillActive(
-      formF!.nodeId,
-      formF!.fields[0] as NodeFormField,
-      false,
-    );
+    state.actions.togglePrefillActive(formF!.nodeId, formF!.fields[0]!, false);
     expect(formF?.fields?.[0]?.prefill?.active).toEqual(false);
-    state.actions.togglePrefillActive(
-      formF!.nodeId,
-      formF!.fields[0] as NodeFormField,
-      true,
-    );
+    state.actions.togglePrefillActive(formF!.nodeId, formF!.fields[0]!, true);
     expect(formF?.fields?.[0]?.prefill?.active).toEqual(true);
   });
 
@@ -140,15 +122,15 @@ describe("Graph Store", () => {
     const formF = state.graph.find((node) => node.nodeTitle === "Form F");
     expect(formF).toBeDefined();
     formF?.fields.forEach((field) => {
-      expect(field!.prefill!.active).toBe(true);
+      expect(field.prefill!.active).toBe(true);
     });
     state.actions.togglePrefillAll(formF!.nodeId, false);
     formF?.fields.forEach((field) => {
-      expect(field!.prefill!.active).toBe(false);
+      expect(field.prefill!.active).toBe(false);
     });
     state.actions.togglePrefillAll(formF!.nodeId, true);
     formF?.fields.forEach((field) => {
-      expect(field!.prefill!.active).toBe(true);
+      expect(field.prefill!.active).toBe(true);
     });
   });
 });

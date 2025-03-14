@@ -167,16 +167,12 @@ export function PrefillConfig({
                               <button
                                 className="w-full rounded-md px-2 py-0.5 text-left hover:bg-indigo-100"
                                 onClick={() => {
-                                  handleUpdatePrefill(
-                                    data.id,
-                                    graphField as NodeFormField,
-                                    {
-                                      inheritFieldId: innerField.fieldId,
-                                      inheritNodeId: innerField.nodeId,
-                                      inheritNodeTitle: innerField.nodeTitle,
-                                      active: true,
-                                    },
-                                  );
+                                  handleUpdatePrefill(data.id, graphField!, {
+                                    inheritFieldId: innerField.fieldId,
+                                    inheritNodeId: innerField.nodeId,
+                                    inheritNodeTitle: innerField.nodeTitle,
+                                    active: true,
+                                  });
                                   updateGraphDate();
                                 }}
                               >

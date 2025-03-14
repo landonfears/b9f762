@@ -107,8 +107,8 @@ export const GraphProvider = ({
         loadFromLocalStorage: () =>
           set((state: GraphStore) => {
             const graph = JSON.parse(
-              localStorage.getItem(LOCAL_STORAGE_KEY) as string,
-            );
+              localStorage.getItem(LOCAL_STORAGE_KEY)!,
+            ) as GraphFormData;
             if (graph) {
               return { graph };
             }

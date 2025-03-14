@@ -10,7 +10,7 @@ export default async function HomePage() {
   const graph: ActionBlueprintGraphDescription | FetchError = await getGraph();
 
   if ("message" in graph) {
-    return <ErrorMessage error={graph as FetchError} />;
+    return <ErrorMessage error={graph} />;
   }
 
   return <Graph graph={graph} />;
