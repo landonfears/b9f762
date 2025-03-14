@@ -104,14 +104,25 @@ export interface PayloadField {
   value: string;
 }
 
+export interface FetchError {
+  message: string;
+}
+
 export async function getGraph() {
-  const response = await fetch(
-    "http://localhost:4000/api/v1/1/actions/blueprints/bp_0/bpv_0/graph?Accept=application/json,application/problem+json",
-    {
-      method: "GET",
-      redirect: "follow",
-    },
-  );
-  const graph = (await response.json()) as ActionBlueprintGraphDescription;
-  return graph;
+  try {
+    const response = await fetch(
+      "http://localhost:4000/api/v1/1/actions/blueprints/bp_0/bpv_0/graph?Accept=application/json,application/problem+json",
+      {
+        method: "GET",
+        redirect: "follow",
+      },
+    );
+    const graph = (await response.json()) as ActionBlueprintGraphDescription;
+    return graph;
+  } catch (cause) {
+    console.error(cause);
+    return {
+      message: "Starting the server can lead to magical things...",
+    } as FetchError;
+  }
 }
