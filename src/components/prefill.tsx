@@ -64,6 +64,9 @@ export function Prefill({
 
     return (hasPrefill && hasActivePrefill) || !hasPrefill;
   }, [graphNode]);
+  const hasCompatibleFields = !!graphNode?.fields.filter(
+    (f) => f.compatibleFields.length > 0,
+  )?.length;
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -81,6 +84,7 @@ export function Prefill({
               id="prefill"
               className="data-[state=checked]:bg-indigo-600"
               checked={isPrefill()}
+              disabled={!hasCompatibleFields}
               onCheckedChange={(e) => {
                 handleTogglePrefillAll(data.id, e);
                 updateGraphDate();
