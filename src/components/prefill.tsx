@@ -16,7 +16,6 @@ import type {
   RemovePrefillFunc,
   TogglePrefillAllFunc,
   TogglePrefillFunc,
-  UpdatePrefillFunc,
 } from "~/store";
 import { PrefillConfig } from "./prefill-config";
 
@@ -34,10 +33,6 @@ export function Prefill({
   const handleRemovePrefill = useGraphStore(
     (state) => state.actions.removePrefill,
   ) as RemovePrefillFunc;
-
-  const handleUpdatePrefill = useGraphStore(
-    (state) => state.actions.updatePrefill,
-  ) as UpdatePrefillFunc;
 
   const handleTogglePrefillActive = useGraphStore(
     (state) => state.actions.togglePrefillActive,

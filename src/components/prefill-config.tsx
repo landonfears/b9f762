@@ -1,4 +1,10 @@
-import { ChevronDown, Search, X } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronsLeftRight,
+  ChevronsRightLeft,
+  Search,
+  X,
+} from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
@@ -17,7 +23,7 @@ import type { FlowNodeData, GraphFormData, NodeFormField } from "~/lib/types";
 import { UpdatePrefillFunc, useGraph, useGraphStore } from "~/store";
 import { ScrollArea } from "./ui/scroll-area";
 import { PopoverClose } from "@radix-ui/react-popover";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export function PrefillConfig({
   children,
@@ -29,6 +35,8 @@ export function PrefillConfig({
   field: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [openItems, setOpenItems] = useState<string[]>([]);
+  const [searchText, setSearchText] = useState("");
 
   const graph = useGraph() as GraphFormData;
   const graphNode = graph.find((gn) => gn.nodeId === data.id);
@@ -48,7 +56,36 @@ export function PrefillConfig({
       a.nodeTitle.localeCompare(b.nodeTitle) ||
       a.fieldId.localeCompare(b.fieldId),
   );
+  const searchFields = useMemo(
+    () =>
+      sorted?.filter((field) => {
+        if (searchText.length < 2) {
+          return true;
+        }
+        return field.fieldId.includes(searchText);
+      }),
+    [sorted, searchText],
+  );
   const grouping: Record<string, boolean> = {};
+
+  const toggleItem = (item: string) => {
+    setOpenItems((prev) =>
+      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item],
+    );
+  };
+
+  useEffect(() => {
+    if (searchText.length > 1) {
+      searchFields?.forEach((field) => {
+        setOpenItems((prevOpenItems) => {
+          if (!prevOpenItems.includes(field.nodeId)) {
+            return [...prevOpenItems, field.nodeId];
+          }
+          return prevOpenItems;
+        });
+      });
+    }
+  }, [searchText, searchFields]);
 
   return (
     <Popover modal open={open} onOpenChange={setOpen}>
@@ -56,14 +93,34 @@ export function PrefillConfig({
         <button>{children}</button>
       </PopoverTrigger>
       <PopoverContent className="PopoverContent">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute right-3 top-3 p-1 hover:bg-transparent"
-          onClick={() => setOpen(false)} // Close Popover
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="absolute right-3 top-3 flex">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="p-1 hover:bg-transparent"
+            onClick={() => setOpenItems(sorted?.map((f) => f.nodeId) ?? [])} // Close Popover
+          >
+            <ChevronsLeftRight className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            className="p-1 hover:bg-transparent"
+            onClick={() => setOpenItems([])} // Close Popover
+          >
+            <ChevronsRightLeft className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            className="p-1 hover:bg-transparent"
+            onClick={() => setOpen(false)} // Close Popover
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
         <div className="flex flex-col gap-3">
           <p className="text-sm font-bold">Select from data to map</p>
 
@@ -76,12 +133,22 @@ export function PrefillConfig({
               placeholder="Search"
               id="search"
               className="rounded-none border-0 p-0 focus-visible:ring-0"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
             />
           </div>
 
           <ScrollArea className="h-40">
-            <Accordion type="multiple" className="w-full">
-              {sorted?.map((field) => {
+            <Accordion
+              type="multiple"
+              className="w-full"
+              value={openItems}
+              onValueChange={setOpenItems}
+            >
+              {searchFields?.length === 0 ? (
+                <p className="text-sm">No results found.</p>
+              ) : null}
+              {searchFields?.map((field) => {
                 if (grouping[field.nodeId]) {
                   return null;
                 }
@@ -97,7 +164,7 @@ export function PrefillConfig({
                     </AccordionTrigger>
                     <AccordionContent className="pb-0 pl-6 pr-6">
                       <ul>
-                        {sorted
+                        {searchFields
                           .filter(
                             (innerField) => innerField.nodeId === field.nodeId,
                           )

@@ -5,7 +5,7 @@
 - [x] Call graph API endpoint
 - [x] Render nodes using React-flow
 - [x] Prefill UI for forms
-- [ ] Prefill config modal
+- [x] Prefill config modal
 - [ ] Add tests
 - [ ] Add documentation
 
