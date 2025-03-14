@@ -69,7 +69,7 @@ export interface FieldProperty {
   title?: string;
   type: string;
   format?: string;
-  enum?: string[];
+  enum?: string[] | object[] | undefined | null;
   items?: FieldItems;
   uniqueItems?: boolean;
 }
