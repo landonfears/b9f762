@@ -5,7 +5,7 @@ This app will display a list of nodes representing forms, and enables configurin
 ## Quickstart
 
 > [!NOTE]
-> Useful information that users should know, even when skimming content.
+> Note: I'm using `pnpm`, but you can use `npm` or `yarn`.
 
 From the project root:
 
