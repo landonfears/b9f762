@@ -29,7 +29,6 @@ export function Prefill({
   setIsOpen: (a: boolean) => void;
 }) {
   const graph = useGraph() as GraphFormData;
-  console.log("graph", graph);
   const graphNode = graph.find((gn) => gn.nodeId === data.id);
   const handleRemovePrefill = useGraphStore(
     (state) => state.actions.removePrefill,

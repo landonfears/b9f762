@@ -1,6 +1,6 @@
 import { vi, expect, describe, it } from "vitest";
-import { FetchError, getGraph } from "../src/server/avantos";
-import graphJson from "../src/server/mock/graph.json";
+import { FetchError, getGraph } from "~/server/avantos";
+import graphJson from "~/server/mock/graph.json";
 
 const mockResponse = graphJson;
 

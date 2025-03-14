@@ -19,7 +19,7 @@ export type UpdatePrefillFunc = (
   inheritedNode: NodeFormPrefill,
 ) => void;
 
-interface GraphStore {
+export interface GraphStore {
   graph: GraphFormData;
   updated: Date;
   actions: {
@@ -29,11 +29,13 @@ interface GraphStore {
     updatePrefill: UpdatePrefillFunc;
     loadFromLocalStorage: () => void;
     updateGraphDate: () => void;
+    resetStore: () => void;
   };
 }
 
 import type { StoreApi } from "zustand";
 import { LOCAL_STORAGE_KEY } from "~/constants";
+import { GRAPH_UTILS } from "~/lib/graph-utils";
 
 const GraphContext = createContext<StoreApi<GraphStore> | null>(null);
 
@@ -51,21 +53,13 @@ export const GraphProvider = ({
       actions: {
         removePrefill: (nodeId: string, field: NodeFormField) =>
           set((state: GraphStore) => {
-            const currGraphNode = state.graph.find(
-              (currNode) => currNode.nodeId === nodeId,
+            const updatedGraph = GRAPH_UTILS.removePrefill(
+              state.graph,
+              nodeId,
+              field,
             );
-            const graphField = currGraphNode?.fields.find(
-              (currField) => currField.fieldId === field.fieldId,
-            );
-            if (graphField) {
-              graphField.prefill = null;
-            }
-
-            localStorage.setItem(
-              LOCAL_STORAGE_KEY,
-              JSON.stringify(state.graph),
-            );
-            return { graph: state.graph };
+            GRAPH_UTILS.setLocalStorage(updatedGraph);
+            return { graph: updatedGraph };
           }),
         updatePrefill: (
           nodeId: string,
@@ -73,21 +67,15 @@ export const GraphProvider = ({
           inheritedNode: NodeFormPrefill,
         ) =>
           set((state: GraphStore) => {
-            const currGraphNode = state.graph.find(
-              (currNode) => currNode.nodeId === nodeId,
+            const updatedGraph = GRAPH_UTILS.updatePrefill(
+              state.graph,
+              nodeId,
+              field,
+              inheritedNode,
             );
-            const graphField = currGraphNode?.fields.find(
-              (currField) => currField.fieldId === field.fieldId,
-            );
-            if (graphField) {
-              graphField.prefill = inheritedNode;
-            }
+            GRAPH_UTILS.setLocalStorage(updatedGraph);
 
-            localStorage.setItem(
-              LOCAL_STORAGE_KEY,
-              JSON.stringify(state.graph),
-            );
-            return { graph: state.graph };
+            return { graph: updatedGraph };
           }),
         togglePrefillActive: (
           nodeId: string,
@@ -95,49 +83,26 @@ export const GraphProvider = ({
           active: boolean,
         ) =>
           set((state: GraphStore) => {
-            const currGraphNode = state.graph.find(
-              (currNode) => currNode.nodeId === nodeId,
+            const updatedGraph = GRAPH_UTILS.togglePrefillActive(
+              state.graph,
+              nodeId,
+              field,
+              active,
             );
-            const graphField = currGraphNode?.fields.find(
-              (currField) => currField.fieldId === field.fieldId,
-            );
-            if (graphField?.prefill) {
-              graphField.prefill.active = active;
-            }
+            GRAPH_UTILS.setLocalStorage(updatedGraph);
 
-            localStorage.setItem(
-              LOCAL_STORAGE_KEY,
-              JSON.stringify(state.graph),
-            );
-            return { graph: state.graph };
+            return { graph: updatedGraph };
           }),
         togglePrefillAll: (nodeId: string, active: boolean) =>
           set((state: GraphStore) => {
-            const currGraphNode = state.graph.find(
-              (currNode) => currNode.nodeId === nodeId,
+            const updatedGraph = GRAPH_UTILS.togglePrefillAll(
+              state.graph,
+              nodeId,
+              active,
             );
+            GRAPH_UTILS.setLocalStorage(updatedGraph);
 
-            if (currGraphNode) {
-              currGraphNode.fields.forEach((currField, index) => {
-                currGraphNode.fields[index] = {
-                  ...currField,
-                  ...(currField.prefill
-                    ? {
-                        prefill: {
-                          ...currField.prefill,
-                          active,
-                        },
-                      }
-                    : undefined),
-                };
-              });
-            }
-
-            localStorage.setItem(
-              LOCAL_STORAGE_KEY,
-              JSON.stringify(state.graph),
-            );
-            return { graph: state.graph };
+            return { graph: updatedGraph };
           }),
         loadFromLocalStorage: () =>
           set((state: GraphStore) => {
@@ -150,6 +115,11 @@ export const GraphProvider = ({
             return { graph: state.graph };
           }),
         updateGraphDate: () => set(() => ({ updated: new Date() })),
+        resetStore: () =>
+          set(() => ({
+            graph: initialGraph,
+            updated: new Date(),
+          })),
       },
     })),
   );

@@ -1,7 +1,7 @@
-import { buildGraphForm } from "../src/lib/utils";
+import { buildGraphForm } from "~/lib/utils";
 import type { ActionBlueprintGraphDescription } from "~/server/avantos";
 import { expect, describe, it } from "vitest";
-import graphJson from "../src/server/mock/graph.json" assert { type: "json" };
+import graphJson from "~/server/mock/graph.json" assert { type: "json" };
 
 const mockResponse: ActionBlueprintGraphDescription = graphJson;
 
