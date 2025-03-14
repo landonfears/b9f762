@@ -1,6 +1,7 @@
 import { FieldProperty } from "~/server/avantos";
 
 export const LOCAL_STORAGE_KEY = "journey-builder-graph";
+export const GLOBAL_MAP_DEPTH = Number.MAX_SAFE_INTEGER;
 
 export const GLOBAL_DATA: {
   id: string;

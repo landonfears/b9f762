@@ -8,7 +8,7 @@ import type {
   NodeDependency,
   NodeFormField,
 } from "./types";
-import { GLOBAL_DATA } from "~/constants";
+import { GLOBAL_DATA, GLOBAL_MAP_DEPTH } from "~/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -74,7 +74,7 @@ function getCompatibleFields(
       compatibleFields.push({
         nodeId: GLOBAL_DATA.id,
         nodeTitle: GLOBAL_DATA.title,
-        depth: Number.MAX_SAFE_INTEGER,
+        depth: GLOBAL_MAP_DEPTH,
         fieldId: globalFieldKey,
       });
     }
@@ -115,7 +115,9 @@ function getPrefill(
   fieldId: string,
 ): NodeFormField["prefill"] {
   const fieldMatch = compatibleFields
-    .filter((field) => field.fieldId === fieldId)
+    .filter(
+      (field) => field.fieldId === fieldId && field.depth < GLOBAL_MAP_DEPTH,
+    )
     .sort((a, b) => a.depth - b.depth);
   if (fieldMatch.length && fieldMatch[0]) {
     return {
@@ -125,7 +127,9 @@ function getPrefill(
       active: true,
     };
   }
-  const anyMatch = compatibleFields.sort((a, b) => a.depth - b.depth);
+  const anyMatch = compatibleFields
+    .filter((field) => field.depth < GLOBAL_MAP_DEPTH)
+    .sort((a, b) => a.depth - b.depth);
   if (anyMatch.length && anyMatch[0]) {
     return {
       inheritNodeId: anyMatch[0].nodeId,
