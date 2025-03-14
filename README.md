@@ -4,7 +4,8 @@ This app will display a list of nodes representing forms, and enables configurin
 
 ## Quickstart
 
-Note: I'm using pnpm, but you can use npm or yarn.
+> [!NOTE]
+> Useful information that users should know, even when skimming content.
 
 From the project root:
 
@@ -41,17 +42,21 @@ You can perform a few functions here:
 1. Toggle prefill fields for the form: This will make the prefill for each form inactive or active if there's a current configuration.
 2. Toggle individual field: Clicking on the eye icon will make that specific form field inactive or active if there's a current configuration.
 3. Remove individual field prefill configuration: Clicking the "X" icon will remove the existing prefill configuration.
-4. Add a new prefill configuration: A popup will appear prompting you to create a new prefill mapping.
+4. Add a new prefill configuration: When clicking on a field without a configuration and compatible fields, a popup will display prompting you to create a new prefill mapping.
 
 ![image](https://mi44j8ce65.ufs.sh/f/GWgmUQMEuTbP2H7zHVumMSoDXVgvH6bCEZtGLA8a3NU1cKzT)
 
-You can search for a specific field name, or browse through the existing ancestor form dropdown fields that are compatible with the field.
+You can search for a specific field name, or browse through the existing ancestor forms' compatible fields.
+
+> [!NOTE]
+> Compatible fields means that the field comes from a form that current form is inherited from, and it is of the same type.
 
 There is also a "Global Data" list of fields that I have defined in the app that is separate from the list of nodes returned from the API.
 
 When you select a field, the prefill configuration will be updated with the new mapping.
 
-The prefill configuration for all nodes is saved in local storage, so any changes you make will persist when reloading the page.
+> [!NOTE]
+> The prefill configuration for all nodes is saved in local storage, so any changes you make will persist when reloading the page.
 
 ## Tests
 
